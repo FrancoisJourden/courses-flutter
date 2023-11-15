@@ -34,30 +34,9 @@ class _ConnectionFormWidgetState extends State<_ConnectionFormWidget> {
   Widget build(BuildContext context) => Form(
         key: _formKey,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          TextFormField(
-            initialValue: email,
-            validator: (value) {
-              if (value!.isEmpty) return ("Please fill the email");
-              if (!RegExp(r"^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$")
-                  .hasMatch(email)) return ("Please fill a valid email");
-              return null;
-            },
-            onChanged: (value) => email = value,
-          ),
-          TextFormField(
-            initialValue: password,
-            obscureText: true,
-            validator: (value) {
-              if (value!.isEmpty) return ("Please fill the password");
-              return null;
-            },
-            onChanged: (value) => password = value,
-          ),
-          FilledButton.icon(
-            icon: const Icon(Icons.login),
-            label: const Text("Connect"),
-            onPressed: connect,
-          )
+          _buildEmailField(),
+          _buildPasswordField(),
+          _buildValidateButton(),
         ]),
       );
 
@@ -67,17 +46,56 @@ class _ConnectionFormWidgetState extends State<_ConnectionFormWidget> {
 
     try {
       await AuthAPI.login(email, password);
-      if(context.mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ShoppingListScreen()));
+      if (context.mounted) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+          return const ShoppingListScreen();
+        }));
       }
-    } on InvalidAuthException{
+    } on InvalidAuthException {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Invalid email or password"),
       ));
-    } on Exception{
+    } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("An unexpected error happened."),
       ));
     }
   }
+
+  Widget _buildEmailField() => Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: TextFormField(
+        decoration: const InputDecoration(labelText: "Email"),
+        keyboardType: TextInputType.emailAddress,
+        initialValue: email,
+        validator: (value) {
+          if (value!.isEmpty) return ("Please fill the email");
+          if (!RegExp(r"^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$").hasMatch(email)) {
+            return ("Please fill a valid email");
+          }
+          return null;
+        },
+        onChanged: (value) => email = value,
+      ));
+
+  Widget _buildPasswordField() => Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: TextFormField(
+        decoration: const InputDecoration(labelText: "Password"),
+        initialValue: password,
+        obscureText: true,
+        validator: (value) {
+          if (value!.isEmpty) return ("Please fill the password");
+          return null;
+        },
+        onChanged: (value) => password = value,
+      ));
+
+  Widget _buildValidateButton() => Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: FilledButton.icon(
+        icon: const Icon(Icons.login),
+        label: const Text("Connect"),
+        onPressed: connect,
+      ));
 }
