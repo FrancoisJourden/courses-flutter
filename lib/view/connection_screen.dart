@@ -1,4 +1,5 @@
-import 'package:courses_flutter/api.dart';
+import 'package:courses_flutter/api/auth_api.dart';
+import 'package:courses_flutter/view/shopping_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class ConnectionScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class _ConnectionFormWidgetState extends State<_ConnectionFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
 
-  String email = API.user?.email ?? "";
+  String email = AuthAPI.user?.email ?? "";
   String password = "";
 
   @override
