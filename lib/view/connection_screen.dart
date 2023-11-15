@@ -65,11 +65,9 @@ class _ConnectionFormWidgetState extends State<_ConnectionFormWidget> {
     ScaffoldMessenger.of(context).clearSnackBars();
 
     try {
-      await API.login(email, password);
+      await AuthAPI.login(email, password);
       if(context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Connected Successfully"),
-      ));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ShoppingListScreen()));
       }
     } on InvalidAuthException{
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
