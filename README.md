@@ -1,16 +1,7 @@
 # courses_flutter
 
-courses client
+courses is a flutter client for courses's API designed for mobile.
+It targets to make a shared groceries list between multiple users.
 
 ## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Don't forget to set a valid API URL in `lib/api/api.dart`
