@@ -11,7 +11,7 @@ class ItemApi {
       Uri.parse("${API.apiUrl}/items/$id"),
       headers: {
         'Accept': 'application/json',
-        'authorization': 'bearer ${AuthAPI.token}'
+        'authorization': 'bearer ${AuthAPI.token}',
       },
     );
 
@@ -19,8 +19,25 @@ class ItemApi {
     if (response.statusCode != 200) throw Exception();
 
     final Map<String, dynamic> data = jsonDecode(response.body);
-    return Item(data['name'], data['unit'], data['category']);
+    return Item(data['id'], data['name'], data['unit'], data['category']);
   }
 
+  static Future<List<Item>> search(String query) async {
+    String uri = "${API.apiUrl}/items/search/$query";
 
+    if (uri.endsWith('/')) uri = uri.substring(0, uri.length - 1);
+
+    http.Response response = await http.get(
+      Uri.parse(uri),
+      headers: {'Accept': 'application/json', 'authorization': 'bearer ${AuthAPI.token}'},
+    );
+
+    if (response.statusCode == 401) throw UnauthenticatedException();
+    if (response.statusCode != 200) throw Exception();
+
+    final List<dynamic> data = jsonDecode(response.body);
+    return data
+        .map((item) => Item(item['id'], item['name'], item['unit'], item['category']))
+        .toList();
+  }
 }

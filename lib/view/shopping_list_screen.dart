@@ -4,33 +4,19 @@ import 'package:courses_flutter/api/article_api.dart';
 import 'package:courses_flutter/api/item_api.dart';
 import 'package:courses_flutter/model/article.dart';
 import 'package:courses_flutter/model/item.dart';
+import 'package:courses_flutter/view/article_add_screen.dart';
 import 'package:courses_flutter/view/connection_screen.dart';
 import 'package:flutter/material.dart';
 
-class ShoppingListScreen extends StatelessWidget {
+
+class ShoppingListScreen extends StatefulWidget {
   const ShoppingListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("My shopping list")),
-      body: const Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: ShoppingListWidget()),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
+  State<ShoppingListScreen> createState() => _ShoppingListScreenState();
 }
 
-class ShoppingListWidget extends StatefulWidget {
-  const ShoppingListWidget({super.key});
-
-  @override
-  State<ShoppingListWidget> createState() => _ShoppingListWidgetState();
-}
-
-class _ShoppingListWidgetState extends State<ShoppingListWidget> {
+class _ShoppingListScreenState extends State<ShoppingListScreen> {
   List<Article>? _articles;
 
   @override
@@ -51,7 +37,24 @@ class _ShoppingListWidgetState extends State<ShoppingListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(onRefresh: _fetchData, child: _buildContent());
+    return Scaffold(
+      appBar: AppBar(title: const Text("My shopping list")),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: RefreshIndicator(onRefresh: _fetchData, child: _buildContent()),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => onAddButtonClick(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Future<void> onAddButtonClick(BuildContext context) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const ArticleAddScreen();
+    }));
+    _fetchData();
   }
 
   Widget _buildContent() {
@@ -101,7 +104,10 @@ class _ShoppingListElementWidgetState extends State<ShoppingListElementWidget> {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [Text(_item!.name.capitalizeWords()), Text("${widget.article.quantity} ${_item!.unit}")],
+      children: [
+        Text(_item!.name.capitalizeWords()),
+        Text("${widget.article.quantity} ${_item!.unit}")
+      ],
     );
   }
 }
