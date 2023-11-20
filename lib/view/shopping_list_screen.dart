@@ -7,7 +7,7 @@ import 'package:courses_flutter/model/item.dart';
 import 'package:courses_flutter/view/article_add_screen.dart';
 import 'package:courses_flutter/view/connection_screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:gap/gap.dart';
 
 class ShoppingListScreen extends StatefulWidget {
   const ShoppingListScreen({super.key});
@@ -63,9 +63,10 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     } else if (_articles!.isEmpty) {
       return ListView(children: const [Center(child: Text("No article in shopping list"))]);
     } else {
-      return ListView.builder(
+      return ListView.separated(
         itemBuilder: (context, index) => ShoppingListElementWidget(article: _articles![index]),
         itemCount: _articles!.length,
+        separatorBuilder: (BuildContext context, int index) => const Gap(10),
       );
     }
   }

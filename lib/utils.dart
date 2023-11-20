@@ -6,4 +6,8 @@ extension StringExtension on String{
   String capitalizeWords({separator= ' '}){
     return split(separator).toList().map((word) => word.capitalize()).join(separator);
   }
+
+  String? nullIfEmpty(){
+    return (isEmpty) ? null : this;
+  }
 }

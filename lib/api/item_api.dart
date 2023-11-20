@@ -37,7 +37,27 @@ class ItemApi {
 
     final List<dynamic> data = jsonDecode(response.body);
     return data
-        .map((item) => Item(item['id'], item['name'], item['unit'], item['category']))
+        .map((item) => Item(
+              id: item['id'],
+              name: item['name'],
+              unit: item['unit'],
+              category: item['category'],
+            ))
         .toList();
+  }
+
+  static Future<void> add(String name, String? unit, String? category) async {
+    final body = {"name": name};
+    if (unit != null) body['unit'] = unit;
+    if (category != null) body['category'] = category;
+
+    final response = await http.post(
+      Uri.parse("${API.apiUrl}/items"),
+      headers: {'Accept': 'application/json', 'authorization': 'bearer ${AuthAPI.token}'},
+      body: body,
+    );
+
+    if (response.statusCode == 401) throw UnauthenticatedException();
+    if (response.statusCode != 201) throw Exception();
   }
 }

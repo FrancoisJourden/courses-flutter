@@ -1,9 +1,11 @@
 import 'package:courses_flutter/api/article_api.dart';
 import 'package:courses_flutter/api/item_api.dart';
 import 'package:courses_flutter/model/item.dart';
+import 'package:courses_flutter/view/item_add_screen.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 
 class ArticleAddScreen extends StatelessWidget {
   const ArticleAddScreen({super.key});
@@ -14,19 +16,19 @@ class ArticleAddScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Add an article"),
       ),
-      body: const Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: ArticleAddForm()),
+      body: const Padding(padding: EdgeInsets.all(10), child: _ArticleAddForm()),
     );
   }
 }
 
-class ArticleAddForm extends StatefulWidget {
-  const ArticleAddForm({super.key});
+class _ArticleAddForm extends StatefulWidget {
+  const _ArticleAddForm();
 
   @override
-  State<ArticleAddForm> createState() => _ArticleAddFormState();
+  State<_ArticleAddForm> createState() => _ArticleAddFormState();
 }
 
-class _ArticleAddFormState extends State<ArticleAddForm> {
+class _ArticleAddFormState extends State<_ArticleAddForm> {
   final _formKey = GlobalKey<FormState>();
 
   Item? item;
@@ -37,15 +39,17 @@ class _ArticleAddFormState extends State<ArticleAddForm> {
     return Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [_buildItemField(), _buildQuantityField(), _buildValidateButton()]),
+          child: Column(children: [
+            _buildItemRow(),
+            const Gap(10),
+            _buildQuantityField(),
+            const Gap(10),
+            _buildValidateButton(),
+          ]),
         ));
   }
 
-  Widget _buildItemField() => Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: DropdownSearch<Item>(
+  Widget _buildItemField() => DropdownSearch<Item>(
         popupProps: const PopupProps.dialog(
           isFilterOnline: true,
           showSearchBox: true,
@@ -62,11 +66,20 @@ class _ArticleAddFormState extends State<ArticleAddForm> {
         asyncItems: ItemApi.search,
         itemAsString: (item) => item.name,
         onChanged: (newItem) => setState(() => item = newItem),
-      ));
+      );
 
-  Widget _buildQuantityField() => Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: TextFormField(
+  Widget _buildAddItemButton() => IconButton(onPressed: addItem, icon: const Icon(Icons.add));
+
+  void addItem() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ItemAddScreen()));
+  }
+
+  Widget _buildItemRow() => Row(children: [
+        Flexible(child: _buildItemField()),
+        _buildAddItemButton(),
+      ]);
+
+  Widget _buildQuantityField() => TextFormField(
         decoration: const InputDecoration(labelText: "quantity"),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         validator: (value) {
@@ -76,23 +89,23 @@ class _ArticleAddFormState extends State<ArticleAddForm> {
         },
         keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: true),
         onChanged: (value) => setState(() => quantity = int.parse(value)),
-      ));
+      );
 
-  Widget _buildValidateButton() => Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: FilledButton.icon(
-        onPressed: () {
-          if(!_formKey.currentState!.validate()) return;
-          try {
-            ArticleAPI.add(item!.id, quantity);
-            Navigator.pop(context);
-          }on Exception{
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("An unknown error happened"),
-            ));
-          }
-        },
+  Widget _buildValidateButton() => FilledButton.icon(
+        onPressed: send,
         icon: const Icon(Icons.add_shopping_cart),
         label: const Text("Add to list"),
+      );
+
+  void send() async {
+    if (!_formKey.currentState!.validate()) return;
+    try {
+      await ArticleAPI.add(item!.id, quantity);
+      if(mounted) Navigator.pop(context);
+    } on Exception {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("An unknown error happened"),
       ));
+    }
+  }
 }
