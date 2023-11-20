@@ -19,7 +19,7 @@ class ItemApi {
     if (response.statusCode != 200) throw Exception();
 
     final Map<String, dynamic> data = jsonDecode(response.body);
-    return Item(data['id'], data['name'], data['unit'], data['category']);
+    return Item(id: data['id'], name: data['name'], unit: data['unit'], category: data['category']);
   }
 
   static Future<List<Item>> search(String query) async {

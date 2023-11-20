@@ -19,7 +19,13 @@ class ArticleAPI {
     if (response.statusCode != 200) throw Exception();
 
     final List<dynamic> data = jsonDecode(response.body);
-    return data.map((e) => Article(e['id'], e['item_id'], e['quantity'],)).toList();
+    return data
+        .map((e) => Article(
+              id: e['id'],
+              itemId: e['item_id'],
+              quantity: e['quantity'],
+            ))
+        .toList();
   }
 
   static Future<void> add(int itemId, int quantity) async {
