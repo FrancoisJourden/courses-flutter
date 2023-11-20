@@ -1,7 +1,7 @@
 class Article{
   int id;
   int itemId;
-  int quantity;
+  int? quantity;
 
-  Article(this.id, this.itemId, this.quantity);
+  Article({required this.id, required this.itemId, this.quantity});
 }
