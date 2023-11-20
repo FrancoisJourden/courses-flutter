@@ -107,7 +107,7 @@ class _ShoppingListElementWidgetState extends State<ShoppingListElementWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(_item!.name.capitalizeWords()),
-        Text("${widget.article.quantity} ${_item!.unit}")
+        Text("${widget.article.quantity} ${_item?.unit ?? ""}")
       ],
     );
   }
